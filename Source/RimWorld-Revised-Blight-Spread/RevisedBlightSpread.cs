@@ -27,10 +27,10 @@ namespace RevisedBlightSpread
     {
         [HarmonyPatch(typeof(Blight), nameof(Blight.TryReproduceNow))]
         [HarmonyPrefix]
-        static bool Prefix(Blight _instance)
+        static bool Prefix(Blight __instance)
         {
-            IntVec3 center = _instance.Position;
-            Map map = _instance.Map;
+            IntVec3 center = __instance.Position;
+            Map map = __instance.Map;
 
             GenRadial.ProcessEquidistantCells(center, 4f, cells =>
             {
@@ -52,6 +52,19 @@ namespace RevisedBlightSpread
         // check for walls in all of the cells
         private static bool NoWalls(List<IntVec3> cells) 
         {
+            StructureLayout structureLayout = new StructureLayout();
+
+            Log.Message("Checking for walls!");
+            foreach (IntVec3 cell in cells)
+            {
+                if (structureLayout.IsWallAt(cell))
+                {
+                    return false;
+                }
+            }
+
+            Log.Message("No walls detected!");
+
             return true;
         }
 

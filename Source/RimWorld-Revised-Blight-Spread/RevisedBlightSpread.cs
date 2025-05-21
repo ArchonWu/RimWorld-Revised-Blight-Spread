@@ -50,7 +50,7 @@ namespace RevisedBlightSpread
                 return false;
             }, map);
 
-            return wallsFound;
+            return !wallsFound;
         }
 
 

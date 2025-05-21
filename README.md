@@ -12,5 +12,5 @@ This mod improves the blight spreading behavior by preventing blight from crossi
 
 
 ## Compatibility
-- Compatible with RimWorld version X.X (specify your target RimWorld version)
+- Compatible with RimWorld version 1.5
 - Should work alongside most mods that do not alter blight spreading directly.

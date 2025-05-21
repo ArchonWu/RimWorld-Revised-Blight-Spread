@@ -31,16 +31,18 @@ namespace RevisedBlightSpread
         {
             IntVec3 center = __instance.Position;
             Map map = __instance.Map;
-
+            Log.Message("TRN");
             GenRadial.ProcessEquidistantCells(center, 4f, cells =>
             {
-                if (NoWalls(cells))
+                Log.Message(cells.Count);
+                if (NoWalls(cells, map))
                 {
-                    // no walls detected, do original
+                    // no walls detected, do original TryReproduceNow()
                     return true;
                 } else
                 {
                     // do patch version
+                    Log.Message("PATCH VERSION ING");
                     
                 }
                 return false;
@@ -50,15 +52,17 @@ namespace RevisedBlightSpread
         }
 
         // check for walls in all of the cells
-        private static bool NoWalls(List<IntVec3> cells) 
+        private static bool NoWalls(List<IntVec3> cells, Map map) 
         {
-            StructureLayout structureLayout = new StructureLayout();
 
-            Log.Message("Checking for walls!");
+            Log.Message($"Checking for walls! Number of cells: {cells.Count}");
             foreach (IntVec3 cell in cells)
             {
-                if (structureLayout.IsWallAt(cell))
+                Log.Message($"Checking {cell}");
+                Thing edifice = map.edificeGrid[cell];  // edifices checks for wall-like structures
+                if (edifice!=null)
                 {
+                    Log.Message($"Wall detected at {cell}, {edifice.def.defName}");
                     return false;
                 }
             }

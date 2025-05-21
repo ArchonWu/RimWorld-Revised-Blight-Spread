@@ -1,11 +1,12 @@
-﻿using System;
+﻿using HarmonyLib;
+using RimWorld;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Verse;
-using HarmonyLib;
-using RimWorld;
+using Verse.Noise;
 
 namespace RevisedBlightSpread
 {
@@ -27,42 +28,63 @@ namespace RevisedBlightSpread
     {
         [HarmonyPatch(typeof(Blight), nameof(Blight.TryReproduceNow))]
         [HarmonyPrefix]
-        static bool Prefix(Blight _instance)
+        static bool Prefix(Blight __instance)
         {
-            IntVec3 center = _instance.Position;
-            Map map = _instance.Map;
+            IntVec3 center = __instance.Position;
+            Map map = __instance.Map;
+            bool wallsFound = false;
+            Log.Message("TRN");
 
+            // go through the nearby cells radially once first, to see if there's any walls within
             GenRadial.ProcessEquidistantCells(center, 4f, cells =>
             {
-                if (NoWalls(cells))
+                Log.Message($"{center}, {cells.Count}");
+                foreach (IntVec3 cell in cells)
                 {
-                    // no walls detected, do original
-                    return true;
-                } else
-                {
-                    // do patch version
-                    
+                    Thing edifice = map.edificeGrid[cell];  // edifices checks for wall-like structures
+                    if (edifice != null)
+                    {
+                        Log.Message($"Wall detected at {cell}, {edifice.def.defName}");
+                        wallsFound = true;
+                    }
                 }
                 return false;
             }, map);
 
-            return false;
+            if (!wallsFound)
+            {
+                return true; // run original method
+            }
+
+            // my logic
+            if (wallsFound)
+            {
+                RevisedBlightSpreadAlgorithm(__instance);                
+            }
+
+            return false;   // skip original method
         }
 
-        // check for walls in all of the cells
-        private static bool NoWalls(List<IntVec3> cells) 
+
+        private static void RevisedBlightSpreadAlgorithm(Blight __instance)
         {
-            return true;
+            IntVec3 center = __instance.Position;
+            Map map = __instance.Map;
+            GenRadial.ProcessEquidistantCells(center, 4f, cells =>
+            {
+               
+                if (cells.Where((IntVec3 x) => BlightUtility.GetFirstBlightableNowPlant(x, map) != null).TryRandomElement(out var result))
+                {
+                    bool hasLineOfSight = GenSight.LineOfSight(center, result, map);
+                    if (hasLineOfSight)     // if there's LOS, no impassable blocks is in between, proceed to blight plant
+                    {
+                        BlightUtility.GetFirstBlightableNowPlant(result, map).CropBlighted();
+                        return true;
+                    }
+                }
+                return false;
+            }, map);
         }
-
-
-        // for each tile, check all 8 adjacent tiles for walls
-        // if wall is found in one direction, that direction is considered blocked by wall
-        private static bool IsBlockedByWall()
-        {
-            return false;
-        }
-
     }
 }
 

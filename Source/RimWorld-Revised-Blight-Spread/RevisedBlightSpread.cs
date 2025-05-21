@@ -32,6 +32,7 @@ namespace RevisedBlightSpread
             IntVec3 center = __instance.Position;
             Map map = __instance.Map;
             bool wallsFound = false;
+            List<IntVec3> walls = new List<IntVec3>();
             Log.Message("TRN");
 
             // go through the nearby cells radially once first, to see if there's any walls within
@@ -45,10 +46,18 @@ namespace RevisedBlightSpread
                     {
                         Log.Message($"Wall detected at {cell}, {edifice.def.defName}");
                         wallsFound = true;
+                        walls.Add(cell);
                     }
                 }
                 return false;
             }, map);
+
+            // remove coords blocked by walls
+            if (wallsFound)
+            {
+                Log.Message($"WALLS: {walls}");
+
+            }
 
             return !wallsFound;
         }

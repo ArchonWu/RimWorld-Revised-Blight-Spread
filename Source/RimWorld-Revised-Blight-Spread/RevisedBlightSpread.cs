@@ -31,46 +31,34 @@ namespace RevisedBlightSpread
         {
             IntVec3 center = __instance.Position;
             Map map = __instance.Map;
+            bool wallsFound = false;
             Log.Message("TRN");
+
+            // go through the nearby cells radially once first, to see if there's any walls within
             GenRadial.ProcessEquidistantCells(center, 4f, cells =>
             {
-                Log.Message(cells.Count);
-                if (NoWalls(cells, map))
+                Log.Message($"{center}, {cells.Count}");
+                foreach (IntVec3 cell in cells)
                 {
-                    // no walls detected, do original TryReproduceNow()
-                    return true;
-                } else
-                {
-                    // do patch version
-                    Log.Message("PATCH VERSION ING");
-                    
+                    Thing edifice = map.edificeGrid[cell];  // edifices checks for wall-like structures
+                    if (edifice != null)
+                    {
+                        Log.Message($"Wall detected at {cell}, {edifice.def.defName}");
+                        wallsFound = true;
+                    }
                 }
                 return false;
             }, map);
 
-            return false;
+            return wallsFound;
         }
 
-        // check for walls in all of the cells
-        private static bool NoWalls(List<IntVec3> cells, Map map) 
+
+        private static void RevisedSpreadBlightAlgorithm()
         {
 
-            Log.Message($"Checking for walls! Number of cells: {cells.Count}");
-            foreach (IntVec3 cell in cells)
-            {
-                Log.Message($"Checking {cell}");
-                Thing edifice = map.edificeGrid[cell];  // edifices checks for wall-like structures
-                if (edifice!=null)
-                {
-                    Log.Message($"Wall detected at {cell}, {edifice.def.defName}");
-                    return false;
-                }
-            }
-
-            Log.Message("No walls detected!");
-
-            return true;
         }
+
 
 
         // for each tile, check all 8 adjacent tiles for walls

@@ -2,6 +2,8 @@
 This mod improves the blight spreading behavior by preventing blight from crossing impassable objects such as walls and doors. 
 With this change, blight can no longer spread through walls, effectively containing infestations within rooms.
 
+Also work on doors as long as it is closed.
+
 # Requirements
 - [Harmony](https://github.com/pardeike/Harmony) (a popular patching library for RimWorld mods)
 

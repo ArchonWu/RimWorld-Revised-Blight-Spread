@@ -3,9 +3,7 @@
 <ModMetaData>
     <name>Revised Blight Spread</name>
     <author>archonwu</author>
-    <description>
-    Walls and doors now block blight spread. Furniture will not block blight, but proper room separation now protects your crops.
-    </description>
+    <description>Walls and doors now block blight spread. Furniture will not block blight, but proper room separation now protects your crops.</description>
     <supportedVersions>
         <li>1.5</li>
         <li>1.4</li>

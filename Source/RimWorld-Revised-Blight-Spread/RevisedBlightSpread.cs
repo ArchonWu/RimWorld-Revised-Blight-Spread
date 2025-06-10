@@ -15,7 +15,7 @@ namespace RevisedBlightSpread
     {
         static RevisedBlightSpread()
         {
-            Log.Message("Static RevisedBlightSpread Class Loaded");
+            //Log.Message("Static RevisedBlightSpread Class Loaded");
             Harmony.DEBUG = true;
             Harmony harmony = new Harmony("rimworld.archonwu.revisedblightspread");
             harmony.PatchAll();
@@ -33,7 +33,6 @@ namespace RevisedBlightSpread
             IntVec3 center = __instance.Position;
             Map map = __instance.Map;
             bool wallsFound = false;
-            Log.Message("TRN");
 
             // go through the nearby cells radially once first, to see if there's any walls within
             GenRadial.ProcessEquidistantCells(center, 4f, cells =>
@@ -44,8 +43,9 @@ namespace RevisedBlightSpread
                     Thing edifice = map.edificeGrid[cell];  // edifices checks for wall-like structures
                     if (edifice != null)
                     {
-                        Log.Message($"Wall detected at {cell}, {edifice.def.defName}");
+                        //Log.Message($"Wall detected at {cell}, {edifice.def.defName}");
                         wallsFound = true;
+                        return true;    // found wall, run original method
                     }
                 }
                 return false;
@@ -65,7 +65,7 @@ namespace RevisedBlightSpread
             return false;   // skip original method
         }
 
-
+        // objects like walls & doors can block blight from spreading, but furniture cannot
         private static void RevisedBlightSpreadAlgorithm(Blight __instance)
         {
             IntVec3 center = __instance.Position;

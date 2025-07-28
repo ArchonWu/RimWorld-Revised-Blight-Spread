@@ -18,5 +18,5 @@ With this change, blight can no longer spread through walls, effectively contain
 - Put the folder in C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods
 
 ## Compatibility
-- Compatible with RimWorld version 1.5
+- Compatible with RimWorld version 1.6, 1.5
 - Should work alongside most mods that do not alter blight spreading directly.
